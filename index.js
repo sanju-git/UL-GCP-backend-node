@@ -11,6 +11,8 @@ app.get("/", (req, res) => {
   res.send("Hello from Express!");
 });
 
+app.use("/api", dataFetchRoutes);
+
 // Cloud Run requires listening on process.env.PORT
 const PORT = process.env.PORT || 8080;
 
