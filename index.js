@@ -17,7 +17,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle all OPTIONS requests globally (important for Cloud Run)
-app.options("/*", cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello from Express!");
