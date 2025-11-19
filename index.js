@@ -13,8 +13,8 @@ app.use(
       "https://ul-gcp-frontend-react-1076232659917.europe-west3.run.app",
       "http://localhost:5173",
     ],
-    methods: "GET,POST,PUT,DELETE,PATCH",
-    allowedHeaders: "Content-Type,Authorization",
+    methods: ["GET,POST,PUT,DELETE,PATCH"],
+    allowedHeaders: ["Content-Type,Authorization"],
   })
 );
 
@@ -28,10 +28,10 @@ app.get("/", (req, res) => {
 // Attach API routes
 app.use("/api", dataFetchRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// app.listen(PORT, "0.0.0.0", () => {
+// app.listen(PORT, () => {
 //   console.log(`Server running on port ${PORT}`);
 // });
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
