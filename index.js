@@ -6,7 +6,6 @@ const dataFetchRoutes = require("./routes/dataFetchRoutes");
 const corsOptions = { origin: "*" };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello from Express!");
