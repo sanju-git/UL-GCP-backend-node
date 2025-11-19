@@ -10,14 +10,14 @@ const PORT = process.env.PORT || 8080;
 app.use(
   cors({
     origin: [
-      "https://ul-gcp-frontend-react-1076232659917.europe-west3.run.app",
+      "https://ul-gcp-frontend-react-1076232659917.europe-west3.run.app/",
       "http://localhost:5173",
     ],
     methods: ["GET,POST,PUT,DELETE,PATCH"],
     allowedHeaders: ["Content-Type,Authorization"],
   })
 );
-app.options("*", cors());
+app.options("/", cors());
 
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(express.static("public"));
