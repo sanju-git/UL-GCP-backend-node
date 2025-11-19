@@ -3,9 +3,19 @@ const app = express();
 const cors = require("cors");
 const dataFetchRoutes = require("./routes/dataFetchRoutes");
 
-const corsOptions = { origin: "*" };
+// 1. Define options
+const corsOptions = {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly allow OPTIONS
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow standard headers
+};
 
+// 2. Apply CORS middleware globally
 app.use(cors(corsOptions));
+
+// 3. IMPORTANT: Enable Preflight handling explicitly
+// This forces Express to respond to OPTIONS requests with a 200 OK and the CORS headers
+app.options("*", cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello from Express!");
@@ -13,14 +23,8 @@ app.get("/", (req, res) => {
 
 app.use("/api", dataFetchRoutes);
 
-// Cloud Run requires listening on process.env.PORT
 const PORT = process.env.PORT || 8080;
 
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
-
 app.listen(PORT, "0.0.0.0", () => {
-  // Add '0.0.0.0' here
   console.log(`Server running on port ${PORT}`);
 });
