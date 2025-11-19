@@ -3,9 +3,7 @@ const app = express();
 const cors = require("cors");
 const dataFetchRoutes = require("./routes/dataFetchRoutes");
 
-const corsOptions = {
-  origin: "*", // Cloud Run requires dynamic frontends, avoid localhost restriction
-};
+const corsOptions = { origin: "*" };
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
@@ -14,13 +12,16 @@ app.get("/", (req, res) => {
   res.send("Hello from Express!");
 });
 
-// API routes
 app.use("/api", dataFetchRoutes);
 
 // Cloud Run requires listening on process.env.PORT
 const PORT = process.env.PORT || 8080;
 
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
 app.listen(PORT, "0.0.0.0", () => {
+  // Add '0.0.0.0' here
   console.log(`Server running on port ${PORT}`);
 });
-
