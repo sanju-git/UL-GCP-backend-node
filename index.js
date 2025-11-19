@@ -1,23 +1,25 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const dataFetchRoutes = require("./routes/dataFetchRoutes");
 
 const app = express();
+// Cloud Run port binding
+const PORT = process.env.PORT || 8080;
 
-// CORS configuration
-const corsOptions = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-  allowedHeaders: "Content-Type,Authorization",
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-};
+app.use(
+  cors({
+    origin: [
+      "https://ul-gcp-frontend-react-1076232659917.europe-west3.run.app",
+      "http://localhost:5173",
+    ],
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
-// Apply CORS globally
-app.use(cors(corsOptions));
-
-// Handle all OPTIONS requests globally (important for Cloud Run)
-app.options("/", cors(corsOptions));
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   res.send("Hello from Express!");
@@ -26,8 +28,10 @@ app.get("/", (req, res) => {
 // Attach API routes
 app.use("/api", dataFetchRoutes);
 
-// Cloud Run port binding
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// app.listen(PORT, "0.0.0.0", () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
