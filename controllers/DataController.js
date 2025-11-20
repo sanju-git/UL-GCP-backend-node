@@ -23,7 +23,7 @@ const multerMid = multer({
 exports.getGCSData = (req, res) => {
   try {
     const myFile =
-      "landing/channel/part-00000-tid-6848421592036126563-315e728b-169a-47c0-aeac-93434fa8edf5-35-1-c000.csv";
+      "uploads/1763618091602-test.csv";
     const remoteFile = storage.bucket(myBucket).file(myFile);
 
     const filename = path.basename(myFile);
