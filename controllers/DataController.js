@@ -1,6 +1,7 @@
 const { Storage } = require("@google-cloud/storage");
 const path = require("path"); // Import path to get the filename
 const multer = require("multer");
+const { query } = require("../config/dbQuery");
 
 const storage = new Storage();
 const myBucket = "multiclouddev";
@@ -83,3 +84,22 @@ exports.uploadCsvToGcs = (req, res, next) => {
     }
   });
 };
+
+exports.getSQLData = async (req, res) => {
+  try {
+    const products = await getAllProducts();
+    // const user = await getUserById(req.params.id);
+    res.json({ success: true, data: products });
+  } catch (error) {
+    console.error("SQL Query Error:", error);
+    res.status(500).send({ message: "Failed to fetch data from SQL." });
+  }
+};
+
+async function getAllProducts() {
+  return query("SELECT external_product_name, global_product_code FROM ref_product_mapping");
+}
+
+async function getUserById(id) {
+  return query("SELECT id, name, email FROM users WHERE id = ?", [id]);
+}
