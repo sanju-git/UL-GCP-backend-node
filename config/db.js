@@ -47,7 +47,7 @@ async function getPool() {
     pool = await sql.connect({
       user: 'ul-test-01',
       password: 'GCPass3ssment',
-      server: '34.39.62.79',
+      server: '10.154.0.3',
       database: 'demo',
       port: 1433,
       options: {
