@@ -45,10 +45,10 @@ let pool;
 async function getPool() {
   if (!pool) {
     pool = await sql.connect({
-      user: 'ul-test-01',
+      user: 'Demo',
       password: 'GCPass3ssment',
-      server: '34.39.62.79',
-      database: 'demo',
+      server: '10.154.0.3',
+      database: 'Demo',
       port: 1433,
       options: {
         trustServerCertificate: true,
