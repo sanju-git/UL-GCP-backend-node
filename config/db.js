@@ -47,12 +47,12 @@ async function getPool() {
     pool = await sql.connect({
       user: 'Demo',
       password: 'GCPass3ssment',
-      server: '10.154.0.3',
+      server: '10.156.0.3',
       database: 'Demo',
       port: 1433,
       options: {
         trustServerCertificate: true,
-        encrypt: false
+        encrypt: true
       }
     });
   }
