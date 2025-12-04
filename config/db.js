@@ -49,7 +49,7 @@ async function getPool() {
       password:'GCPass3ssment',
       server:'10.154.0.3',
       database:'Demo',
-      port:'1433',
+      port:1433,
       options: {
         trustServerCertificate: true,
         encrypt: true
