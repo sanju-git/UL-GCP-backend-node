@@ -4,6 +4,7 @@ const multer = require("multer");
 const { query } = require("../config/dbQuery");
 const storage = new Storage();
 const myBucket = "multiclouddev";
+const { getDBXSession } = require("../config/databricks");
 const multerMid = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -132,3 +133,49 @@ exports.updateProductName = async (req, res) => {
     res.status(500).json({ message: "Failed to update product" });
   }
 };
+
+exports.getUCProductMappingData = async (req, res) => {
+  try {
+    const session = await getDBXSession()
+    const sqlSession = await session.openSession()
+    const result = await sqlSession.executeStatement(`
+      SELECT * 
+      FROM multiclouddev_we2.raw.ref_product_mapping
+      LIMIT 20
+    `);
+    const rows = await result.fetchAll();
+    await session.close();
+    res.json({ data: rows });
+  } catch (err) {
+    console.error("Databricks error:", err);
+    res.status(500).json({ error: "Databricks query failed" });
+  }
+};
+
+exports.insertUCProductMappingData = async (req, res) => {
+  try {
+    const { external_product_name, global_product_code } = req.body;
+    console.log(external_product_name, global_product_code)
+    if (!external_product_name || !global_product_code) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    const session = await getDBXSession();
+    const sqlSession = await session.openSession();
+    const insertQuery = `
+      INSERT INTO multiclouddev_we2.raw.ref_product_mapping 
+      (external_product_name, global_product_code)
+      VALUES (?, ?)
+    `;
+    // const result = await sqlSession.executeStatement(insertQuery, {
+    //   parameters: [external_product_name, global_product_code],
+    // });
+    // Correct parameter binding
+    const result = await sqlSession.executeStatement(insertQuery, { parameters: [ { name: "1", value: external_product_name }, { name: "2", value: global_product_code } ], });
+    await sqlSession.close();
+    res.json({ success: true, message: "Product inserted successfully" });
+  } catch (err) {
+    console.error("Insert UC Product Error:", err);
+    res.status(500).json({ error: "Insert failed" });
+  }
+};
+
