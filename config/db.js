@@ -45,7 +45,7 @@ let pool;
 async function getPool() {
   if (!pool) {
     pool = await sql.connect({
-      user:'Demo' ,
+      user:'Demo',
       password:'GCPass3ssment',
       server:'10.154.0.3',
       database:'Demo',
