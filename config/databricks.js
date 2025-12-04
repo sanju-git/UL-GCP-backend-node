@@ -7,7 +7,8 @@ async function getDBXSession() {
     await dbxSession.connect({
       token: process.env.DATABRICKS_TOKEN,
       host: process.env.DATABRICKS_HOST,
-      path: process.env.DATABRICKS_HTTP_PATH
+      path: process.env.DATABRICKS_HTTP_PATH,
+      port: Number(process.env.DATABRICKS_PORT || 443),
     });
   }
   return dbxSession;
