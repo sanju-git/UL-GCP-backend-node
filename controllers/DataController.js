@@ -157,19 +157,23 @@ exports.insertUCProductMappingData = async (req, res) => {
   let sqlSession = null;
   try {
     const { external_product_name, global_product_code } = req.body;
-    console.log(external_product_name, global_product_code)
+    console.log(external_product_name, global_product_code);
+
     if (!external_product_name || !global_product_code) {
       return res.status(400).json({ error: "Missing required fields" });
     }
+
     const client = await getDBXClient();
     sqlSession = await client.openSession();
+
     const insertQuery = `
-      INSERT INTO multiclouddev_we2.raw.ref_product_mapping 
-      (external_product_name, global_product_code)
-      VALUES (?, ?)
+      INSERT INTO multiclouddev_we2.raw.ref_product_mapping
+      VALUES ('${external_product_name}', '${global_product_code}')
     `;
-    // Execute with positional parameters
-    await sqlSession.executeStatement(insertQuery, [external_product_name, global_product_code]);
+
+    await sqlSession.executeStatement(insertQuery);
+    await sqlSession.executeStatement("COMMIT");
+
     res.json({ success: true, message: "Product inserted successfully" });
   } catch (err) {
     console.error("Insert UC Product Error:", err);
