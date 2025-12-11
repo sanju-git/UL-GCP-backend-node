@@ -50,6 +50,8 @@
 
 const { GoogleAuth } = require("google-auth-library");
 const databricks = require("@databricks/sql");
+const fetch = require("node-fetch");
+
 
 async function getGoogleIDToken(audience) {
   const auth = new GoogleAuth();
@@ -78,4 +80,27 @@ async function getDBXClient() {
   return dbxClient;
 }
 
-module.exports = { getDBXClient };
+async function triggerDatabricksJob() {
+  const idToken = await getGoogleIDToken(process.env.DATABRICKS_HOST);
+ 
+  const response = await fetch(`${process.env.DATABRICKS_HOST}/api/2.1/jobs/run-now`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${idToken}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      job_id: Number(process.env.DATABRICKS_JOB_ID)
+    })
+  });
+
+  console.log(response)
+
+  if (!response.ok) {
+    throw new Error(`Databricks API error: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+module.exports = { getDBXClient, triggerDatabricksJob };

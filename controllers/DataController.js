@@ -4,7 +4,7 @@ const multer = require("multer");
 const { query } = require("../config/dbQuery");
 const storage = new Storage();
 const myBucket = "multiclouddev";
-const { getDBXClient } = require("../config/databricks");
+const { getDBXClient, triggerDatabricksJob} = require("../config/databricks");
 const multerMid = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -182,5 +182,16 @@ exports.insertUCProductMappingData = async (req, res) => {
     if (sqlSession) {
       await sqlSession.close();
     }
+  }
+};
+
+exports.runJob = async (req, res) => {
+  try {
+    console.log("Inside Run job")
+    const result = await triggerDatabricksJob(); 
+    console.log(result)
+    res.json({ success: true, result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 };
