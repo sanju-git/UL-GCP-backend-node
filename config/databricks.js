@@ -52,20 +52,33 @@ const { GoogleAuth } = require("google-auth-library");
 const databricks = require("@databricks/sql");
 const fetch = require("node-fetch");
 
-
+/**
+ * Get a Google ID token for Databricks SQL connections.
+ */
 async function getGoogleIDToken(audience) {
   const auth = new GoogleAuth();
-  // This will use ADC (no key file needed)
   const client = await auth.getIdTokenClient(audience);
   const headers = await client.getRequestHeaders();
-  // The token is in the Authorization header
-  let authHeader = headers.get("authorization")
+  const authHeader = headers["authorization"] || headers.get("authorization");
   return authHeader.replace("Bearer ", "");
 }
 
+/**
+ * Get a Google OAuth access token for Databricks REST API calls.
+ */
+async function getGoogleAccessToken() {
+  const auth = new GoogleAuth({
+    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+  });
+  const client = await auth.getClient();
+  const accessToken = await client.getAccessToken();
+  return accessToken.token;
+}
 
+/**
+ * Databricks SQL Client (uses ID token).
+ */
 let dbxClient = null;
-
 async function getDBXClient() {
   if (!dbxClient) {
     const idToken = await getGoogleIDToken(process.env.DATABRICKS_HOST);
@@ -80,24 +93,27 @@ async function getDBXClient() {
   return dbxClient;
 }
 
+/**
+ * Trigger a Databricks Job (uses access token).
+ */
 async function triggerDatabricksJob() {
-  const idToken = await getGoogleIDToken(process.env.DATABRICKS_HOST);
- 
+  const accessToken = await getGoogleAccessToken();
+
   const response = await fetch(`${process.env.DATABRICKS_HOST}/api/2.1/jobs/run-now`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${idToken}`,
-      "Content-Type": "application/json"
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      job_id: Number(process.env.DATABRICKS_JOB_ID)
-    })
+      job_id: Number(process.env.DATABRICKS_JOB_ID),
+    }),
   });
-
-  console.log(response)
+  console.log("Response:", response);
 
   if (!response.ok) {
-    throw new Error(`Databricks API error: ${response.statusText}`);
+    const text = await response.text();
+    throw new Error(`Databricks API error: ${response.statusText} - ${text}`);
   }
 
   return response.json();
