@@ -13,17 +13,17 @@ async function getGoogleIDToken(audience) {
   return authHeader.replace("Bearer ", "");
 }
 
-/**
- * Get a Google OAuth access token for Databricks REST API calls.
- */
-async function getGoogleAccessToken() {
-  const auth = new GoogleAuth({
-    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-  });
-  const client = await auth.getClient();
-  const accessToken = await client.getAccessToken();
-  return accessToken.token;
-}
+// /**
+//  * Get a Google OAuth access token for Databricks REST API calls.
+//  */
+// async function getGoogleAccessToken() {
+//   const auth = new GoogleAuth({
+//     scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+//   });
+//   const client = await auth.getClient();
+//   const accessToken = await client.getAccessToken();
+//   return accessToken.token;
+// }
 
 /**
  * Databricks SQL Client (uses ID token).
