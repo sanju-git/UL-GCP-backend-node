@@ -120,8 +120,6 @@ exports.updateProductName = async (req, res) => {
   try {
     const { productcode } = req.params;
     const { newName } = req.body;
-    console.log("Product Code", productcode)
-    console.log("New Name", newName)
     await query(
       "UPDATE ref_product_mapping SET external_product_name = @newName WHERE global_product_code = @productcode",
       { productcode, newName }
@@ -157,7 +155,6 @@ exports.insertUCProductMappingData = async (req, res) => {
   let sqlSession = null;
   try {
     const { external_product_name, global_product_code } = req.body;
-    console.log(external_product_name, global_product_code);
 
     if (!external_product_name || !global_product_code) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -187,9 +184,7 @@ exports.insertUCProductMappingData = async (req, res) => {
 
 exports.runJob = async (req, res) => {
   try {
-    console.log("Inside Run job")
     const result = await triggerDatabricksJob(); 
-    console.log(result)
     res.json({ success: true, result });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
